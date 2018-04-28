@@ -25,3 +25,19 @@
 
 ### 安装Spark
 参照 。。。
+
+
+1. Hadoop出现错误：WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable，解决方案
+
+https://www.cnblogs.com/likui360/p/6558749.html
+
+2. spark 安装
+https://blog.csdn.net/ouyangyanlan/article/details/52355350
+
+3. spark 执行顺序
+https://blog.csdn.net/gou290966707/article/details/76546450
+
+4. 一个电影系统
+
+
+

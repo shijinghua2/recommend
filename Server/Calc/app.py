@@ -15,19 +15,18 @@ def top_ratings(user_id, count):
     logger.debug("User %s TOP ratings requested", user_id)
     top_ratings = recommendation_engine.get_top_ratings(user_id,count)
     return json.dumps(top_ratings)
- 
+
 @main.route("/<int:user_id>/ratings/<string:book_id>", methods=["GET"])
 def book_ratings(user_id, book_id):
     logger.debug("User %s rating requested for book %s", user_id, book_id)
     hash_book_id = abs(hash(book_id)) % (10 ** 8)
     ratings = recommendation_engine.get_ratings_for_book_ids(user_id, [hash_book_id])
     return json.dumps(ratings)
- 
- @main.route("/<int:num>/ratings", methods = ["POST"])
- def top_books(num):
-     return []
 
- 
+@main.route("/<int:num>/ratings", methods = ["POST"])
+def top_books(num):
+    return []
+
 @main.route("/<int:user_id>/ratings", methods = ["POST"])
 def add_ratings(user_id):
     # get the ratings from the Flask POST request object

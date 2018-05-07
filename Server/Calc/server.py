@@ -28,7 +28,6 @@ def run_server(app):
         'server.socket_host': '0.0.0.0'
     })
 
-    print('hhhhhhhhhhhhhhhhhhhhhhhhhh')
  
     # Start the CherryPy WSGI web server
     cherrypy.engine.start()
@@ -39,11 +38,9 @@ if __name__ == "__main__":
     # Init spark context and load libraries
     sc = init_spark_context()
 
-    print('aaaaaaaaaaaaaaaaaaaaaa')
     #  dataset_path = os.path.join('../Data', 'BX-CSV-Dump')
     dataset_path = os.path.join('../Data')
     app = create_app(sc, dataset_path)
-    print('bbbbbbbbbbbbbbbbb')
     # start web server
     run_server(app)
 

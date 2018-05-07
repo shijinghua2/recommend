@@ -39,7 +39,9 @@ if __name__ == "__main__":
     sc = init_spark_context()
 
     #  dataset_path = os.path.join('../Data', 'BX-CSV-Dump')
-    dataset_path = os.path.join('../Data')
+    # dataset_path = os.path.join('../Data')
+    dataset_path = os.path.abspath(os.path.join(os.getcwd(), '../Data'))
+    print(dataset_path)
     app = create_app(sc, dataset_path)
     # start web server
     run_server(app)

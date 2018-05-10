@@ -67,6 +67,9 @@ docs/_build/
 # PyBuilder
 target/
 
+*.db
+fialISBN.txt
+
 # Jupyter Notebook
 .ipynb_checkpoints
 

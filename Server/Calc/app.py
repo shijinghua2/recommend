@@ -2,13 +2,23 @@ from flask import Blueprint
 main = Blueprint('main', __name__)
  
 import json
-from engine import RecommendationEngine
- 
 import logging
+import cherrypy
+from engine import RecommendationEngine
+from dao import Dao
+from flask import Flask, request, Response
+import cherrypy_cors
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
- 
-from flask import Flask, request
+
+
+def CORS():
+    cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
+    cherrypy.response.headers["Access-Control-Allow-Methods"] = "GET, POST, HEAD, PUT, DELETE"
+
+
+cherrypy.tools.CORS = cherrypy.Tool('before_finalize', CORS)
+
  
 @main.route("/<int:user_id>/ratings/top/<int:count>", methods=["GET"])
 def top_ratings(user_id, count):
@@ -36,16 +46,48 @@ def add_ratings(user_id):
     # create a list with the format required by the negine (user_id, book_id, rating)
     ratings = map(lambda x: (user_id, int(x[0]), float(x[1])), ratings_list)
     # add them to the model using then engine API
-    recommendation_engine.add_ratings(ratings)
- 
+    recommendation_engine.add_ratings(ratings) 
     return json.dumps(ratings)
- 
- 
-def create_app(spark_context, dataset_path):
-    global recommendation_engine 
 
-    recommendation_engine = RecommendationEngine(spark_context, dataset_path)    
-    
+
+@main.route("/login/<int:user_id>", methods=["POST"])
+def login(user_id):
+    enablecors()
+    return 'abc'
+    # return dbdao.login(user_id)
+
+
+@main.route("/logout", methods=["POST"])
+def logout():
+    guid=request.cookies.get('guid')
+    if guid is None:
+        return -1
+    else:
+        return dbdao.logout(guid)
+
+
+@main.route('/top_books/<int:num>', methods=['GET'])
+def topbooks(num):
+    return dbdao.get_top_books(num)
+
+@main.route('/top_tags/<int:num>',methods=['GET'])
+def toptags(num):
+    return dbdao.get_top_tags(num)
+ 
+@main.route('/top_tag_books/<int:tagid>/<int:num>',methods=['GET'])
+def toptagbooks(tagid, num):
+    return dbdao.get_top_tag_books(tagid,num)
+
+def enablecors():
+    cherrypy.response.headers["Content-Type"] = "application/javascript"
+    cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
+    cherrypy.response.headers["Access-Control-Allow-Methods"] = "GET, POST, HEAD, PUT, DELETE"
+
+def create_app(spark_context, dataset_path):
+    cherrypy_cors.install()
+    global recommendation_engine,dbdao
+    # recommendation_engine = RecommendationEngine(spark_context, dataset_path)    
     app = Flask(__name__)
     app.register_blueprint(main)
+    dbdao=Dao()
     return app 

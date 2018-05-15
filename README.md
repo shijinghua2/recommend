@@ -96,3 +96,9 @@ https://blog.csdn.net/ul646691993/article/details/52736279
     5432
 * redis
     6379
+
+
+## 可以改进的地方
+
+注册用户
+用户行为，评分 动态增加计算银子

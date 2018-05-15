@@ -1,21 +1,23 @@
 import request from 'superagent'
 
+const api='http://127.0.0.1:5432'
+let apiUrl=function(url){
+  return `${api}/${url}`
+}
 const state = {
-  login_email: '',
-  login_token: '',
-  login_name: '',
-  temp_email: '',
-  temp_token: '',
-  temp_name: ''
+  uid:'',
+  location:'',
+  age:''
 }
 
 const getters = {
   // Filtering currentUser
   currentUser: state => {
     return {
-      email: state.login_email,
-      token: state.login_token,
-      name: state.login_name
+      uid: state.uid,
+      guid: state.guid,
+      location: state.location,
+      age: state.age
     }
   }
 }
@@ -23,36 +25,42 @@ const getters = {
 const mutations = {
   updateData (state, payload) {
     switch (payload.name) {
-      case 'email':
-        state.temp_email = payload.value
+      case 'uid':
+        state.uid = payload.value
         break
-      case 'token':
-        state.temp_token = payload.value
+      case 'guid':
+        state.guid = payload.value
         break
-      case 'name':
-        state.temp_name = payload.name
+      case 'location':
+        state.location = payload.name
         break
       default:
         console.log('Error:Dont directly mutate Vuex store')
     }
   },
   getLocalUser (state) {
-    state.login_email = localStorage.getItem('email')
-    state.login_token = localStorage.getItem('token')
-    state.login_name = localStorage.getItem('name')
+    state.uid = localStorage.getItem('uid')
+    state.location = localStorage.getItem('location')
+    state.age = localStorage.getItem('age')
+    state.guid = localStorage.getItem('guid')
   },
   setUser (state, payload) {
-    state.login_email = payload.email
-    state.login_token = payload.token
-    state.login_name = payload.name
+    state.uid = payload.uid
+    state.location = payload.location
+    state.age = payload.age
+
+    state.guid = payload.guid
   },
   logout (state) {
-    localStorage.removeItem('email')
-    localStorage.removeItem('token')
-    localStorage.removeItem('name')
-    state.login_email = ''
-    state.login_token = ''
-    state.login_name = ''
+    localStorage.removeItem('uid')
+    localStorage.removeItem('loation')
+    localStorage.removeItem('age')
+    localStorage.removeItem('guid')
+
+    state.uid = ''
+    state.location = ''
+    state.guid = ''
+    state.age=''
   }
 }
 
@@ -68,47 +76,15 @@ const actions = {
   login ({ commit }, payload) {
     return new Promise((resolve, reject) => {
       request
-        .get('https://douban.herokuapp.com/user/' + payload.email)
-        .set('Authorization', 'Bearer ' + payload.token)
-        .then(res => {
-          commit({
-            type: 'setUser',
-            email: res.body.email,
-            token: res.body.token,
-            name: res.body.name
-          })
-          resolve(res)
-        }, err => {
-          reject(err)
-        })
-    })
-  },
-  /**
-   * Register
-   * new Promise((resolve, reject) => {})
-   * email: payload.email
-   * pass: payload.pass
-   * name: payload.name
-   */
-  register ({ commit }, payload) {
-    return new Promise((resolve, reject) => {
-      request
-        .post('https://douban.herokuapp.com/user/')
-        .send({
-          email: payload.email,
-          pass: payload.pass,
-          name: payload.name
-        })
-        .then(res => {
-          localStorage.setItem('token', res.body.token)
-          localStorage.setItem('email', res.body.email)
-          localStorage.setItem('name', res.body.name)
+        .post(apiUrl ('login/' + payload.uid))
 
+        .then(res => {
           commit({
             type: 'setUser',
-            email: res.body.email,
-            token: res.body.token,
-            name: res.body.name
+            uid: res.body.uid,
+            guid: res.body.guid,
+            location: res.body.location,
+            age: res.body.age
           })
           resolve(res)
         }, err => {

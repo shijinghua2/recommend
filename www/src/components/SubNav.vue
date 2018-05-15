@@ -3,12 +3,12 @@
     <!-- Bottom nav -->
     <div class="navBottom" v-if="mold === 'navBottom'">
       <div class="nav-item">
-        <router-link :to="{name: 'RegisterView'}">注册帐号</router-link><!-- replace blank
-        --><template v-if="currentUser.email">
+        <!-- replace blank-->
+        <template v-if="currentUser.email">
           <a href="#" @click.prevent="logout()">退出登录</a>
         </template>
         <template v-else>
-          <router-link :to="{name: 'LoginView'}" replace>登录豆瓣</router-link>
+          <router-link :to="{name: 'LoginView'}" replace>登录系统</router-link>
         </template>
       </div>
     </div>
@@ -16,14 +16,11 @@
     <div class="quickNav" v-if="mold === 'quickNav'">
       <ul class="quick-nav">
         <li>
-          <router-link :to="{name: 'RegisterView'}">注册帐号</router-link>
-        </li>
-        <li>
           <template v-if="currentUser.email">
             <a href="#" @click.prevent="logout()">退出登录</a>
           </template>
           <template v-else>
-            <router-link :to="{name: 'LoginView'}" replace>登录豆瓣</router-link>
+            <router-link :to="{name: 'LoginView'}" replace>登录系统</router-link>
           </template>
         </li>
       </ul>
@@ -107,7 +104,7 @@ export default {
 
     li {
       float: left;
-      width: 50%;
+      width: 100%;
       padding: 0.3rem;
       box-sizing: border-box;
       font-size: 1.5rem;

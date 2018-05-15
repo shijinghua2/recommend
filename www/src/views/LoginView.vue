@@ -1,47 +1,28 @@
 <template>
   <div class="login-view">
     <h1>
-      <a href="javascript:history.go(-1);">取消</a>登录豆瓣
+      <a href="javascript:history.go(-1);">取消</a>登录系统
     </h1>
     <form method="get" @submit.prevent="onSubmit()">
       <p v-if="error" class="tip error">{{error}}</p>
       <div class="form-user">
         <label>
-          <strong>邮箱</strong>
+          <strong>用户ID</strong>
           <input
-            v-model="email"
-            type="email"
-            name="email"
+            :value="uid"
+            type="text"
+            name="uid"
             @input="updateData"
-            placeholder="邮箱">
+            placeholder="用户ID">
         </label>
       </div>
       <div class="form-pwd">
         <label>
           <strong>请输入密码</strong>
-          <template v-if="passType === 'password'">
-            <input
-            v-model="token"
-            type="password"
-            name="token"
-            @input="updateData"
-            placeholder="密码">
-          </template>
-          <template v-if="passType === 'text'">
-            <input
-            v-model="token"
-            type="text"
-            name="token"
-            @input="updateData"
-            placeholder="Token">
-          </template>
+          
           <span class="show-pwd" :class="{show: isShow}" @click="showPwd()"></span>
         </label>
       </div>
-      <!-- <div class="form-element hide">
-        <input id="remember" type="checkbox" name="remember" checked="">
-        <label for="remember">下次自动登录</label>
-      </div> -->
       <div class="">
         <button
           class="submit"
@@ -52,12 +33,6 @@
         </button>
       </div>
     </form>
-    <div class="footer">
-      <div class="more-login">使用其他方式登录 &amp; 找回密码</div>
-      <div class="btns">
-        <router-link :to="{name: 'RegisterView'}">注册豆瓣帐号</router-link>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -78,16 +53,14 @@ export default {
   computed: {
     // Getting Vuex State from store/modules/user
     ...mapState({
-      email: state => state.user.temp_email,
-      token: state => state.user.temp_token
+      uid: state => state.user.uid,
+      guid: state => state.user.guid,
+      location: state => state.user.location,
+      age:state=>state.user.age
     })
   },
   methods: {
-    showPwd: function () {
-      this.isShow = this.isShow ? 0 : 1
-      this.isShow ? this.passType = 'text' : this.passType = 'password'
-    },
-    updateData: function (e) {
+    updateData(e) {
       // v-model Form handling
       this.$store.commit({
         type: 'updateData',
@@ -95,29 +68,28 @@ export default {
         value: e.target.value
       })
     },
-    beforeSubmit: function () {
+    beforeSubmit (){
       // console.log('Submiting...')
       this.isDisabled = true
       this.loginState = '正在登录...'
     },
-    onSuccess: function (res) {
+    onSuccess (res){
       // console.log('complete!')
       this.$router.push({name: 'StatusView'})
     },
-    onError: function (err) {
+    onError (err) {
       // console.log(err)
-      this.error = err.body.error
+      this.error = 'login failed' // err.response.error.message
       this.loginState = '登录'
       this.isDisabled = false
     },
-    onSubmit: function () {
+    onSubmit() {
       // Disabled submit button
       this.beforeSubmit()
       // Login...
       this.$store.dispatch({
         type: 'login',
-        email: this.email,
-        token: this.token
+        uid: this.uid
       }).then(res => {
         // Success handle
         this.onSuccess(res)

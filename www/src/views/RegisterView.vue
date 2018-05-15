@@ -13,7 +13,7 @@
       </form>
     </template>
     <template v-else>
-      <h1 class="title">欢迎加入豆瓣</h1>
+      <h1 class="title">欢迎加入图书推荐系统</h1>
       <form method="post" @submit.prevent="onSubmit()">
         <p v-if="error" class="tip error">{{error}}</p>
         <div class="form-alias">

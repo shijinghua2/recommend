@@ -3,6 +3,8 @@ spark-submit --master spark://sserver0:7077 --total-executor-cores 14 --executor
 
 spark-submit --total-executor-cores 14 --executor-memory 1g server.py 
 
+spark-submit server.py 
+
 
 
 

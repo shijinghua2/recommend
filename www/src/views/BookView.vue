@@ -50,6 +50,13 @@ export default {
     // Dispatching getBook
     getBook: function () {
       this.$store.dispatch('getBook')
+      if(this.uid){
+        this.$store.dispatch('getRecommend',{
+          uid:this.uid,
+          count:8
+        })
+      }
+      
     }
   },
   created: function created () {

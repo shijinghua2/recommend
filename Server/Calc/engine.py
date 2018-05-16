@@ -118,7 +118,7 @@ class RecommendationEngine:
         books_raw_data_header = books_raw_RDD.take(1)[0]
         self.books_RDD = books_raw_RDD.filter(lambda line: line!=books_raw_data_header)\
             .map(lambda line: line.split(";"))\
-            .map(lambda tokens:len(tokens)>=5)\
+            .filter(lambda tokens:len(tokens)>=5)\
             .map(lambda tokens: (abs(hash(tokens[0][1:-1])) % (10 ** 8), tokens[1][1:-1], tokens[2][1:-1], tokens[3][1:-1], tokens[4][1:-1], tokens[5][1:-1])).cache()
         self.books_titles_RDD = self.books_RDD.map(lambda x: (int(x[0]), x[1], x[2], x[3], x[4], x[5])).cache()
         # Pre-calculate books ratings counts

@@ -44,14 +44,15 @@ class RecommendationEngine:
         predicted_RDD = self.model.predictAll(user_and_book_RDD)
         predicted_rating_RDD = predicted_RDD.map(lambda x: (x.product, x.rating))
         predicted_rating_title_and_count_RDD = \
-            predicted_rating_RDD.join(self.books_titles_RDD.map(lambda x: (x[0], (x[1], x[2], x[3], x[4], x[5])))).join(self.books_rating_counts_RDD)
+            predicted_rating_RDD.join(self.books_titles_RDD.map(lambda x: (
+                x[0], (x[1], x[2], x[3], x[4], x[5], x[6], x[7])))).join(self.books_rating_counts_RDD)
         predicted_rating_title_and_count_RDD = \
             predicted_rating_title_and_count_RDD.map(lambda r: (r[1][0][1][0], r[1][0][0], r[1][1], r[1][0][1][1], r[1][0][1][2], r[1][0][1][3], r[1][0][1][4]))
         
         return predicted_rating_title_and_count_RDD
 
     def __list_to_json(self, ratings):
-        fields = ['Title', 'Rating', 'Count', 'Author', 'Year', 'Publisher', 'URL']
+        fields = ['Title', 'Rating', 'Count', 'Author', 'Year', 'Publisher', 'URL',"Isbn"]
         data = [dict(zip(fields, r)) for r in ratings]
         return data
     
@@ -89,10 +90,6 @@ class RecommendationEngine:
 
         return self.__list_to_json(ratings)
 
-    def __split(self,line):
-        print(line)
-        return line.split(';')
-
     def __init__(self, sc, dataset_path):
         """Init the recommendation engine given a Spark context and a dataset path
         """
@@ -119,8 +116,8 @@ class RecommendationEngine:
         self.books_RDD = books_raw_RDD.filter(lambda line: line!=books_raw_data_header)\
             .map(lambda line: line.split(";"))\
             .filter(lambda tokens:len(tokens)>=5)\
-            .map(lambda tokens: (abs(hash(tokens[0][1:-1])) % (10 ** 8), tokens[1][1:-1], tokens[2][1:-1], tokens[3][1:-1], tokens[4][1:-1], tokens[5][1:-1])).cache()
-        self.books_titles_RDD = self.books_RDD.map(lambda x: (int(x[0]), x[1], x[2], x[3], x[4], x[5])).cache()
+            .map(lambda tokens: (abs(hash(tokens[0][1:-1])) % (10 ** 8), tokens[1][1:-1], tokens[2][1:-1], tokens[3][1:-1], tokens[4][1:-1], tokens[5][1:-1], tokens[6][1:-1], tokens[7][1:-1])).cache()
+        self.books_titles_RDD = self.books_RDD.map(lambda x: (int(x[0]), x[1], x[2], x[3], x[4], x[5], x[6], x[7])).cache()
         # Pre-calculate books ratings counts
         self.__count_and_average_ratings()
 

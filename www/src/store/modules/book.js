@@ -47,6 +47,7 @@ const actions = {
           if (!res.body) {
             res.body = JSON.parse(res.text)
           }
+          debugger
           commit({
             type: 'getBook',
             tag: 'recommendtop',

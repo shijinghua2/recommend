@@ -3,9 +3,9 @@
     <!-- <sub-nav mold="quickNav"></sub-nav> -->
     <user-bar></user-bar>
     <scroller title="评分最高" type="hasCover" :items="top"></scroller>
-    <scroller title="为你推荐" type="hasCover" v-if="uid" :items="travel"></scroller>
-    <scroller title="热门图书榜" type="hasCover" :items="novel"></scroller>
-    
+    <scroller title="您评分的" type="hasCover" v-if="uid" :items="topuser"></scroller>
+    <scroller title="为您推荐" type="hasCover" v-if="uid" :items="recommendtop"></scroller>
+    <!-- <scroller title="热门图书榜" type="hasCover" :items="novel"></scroller>     -->
     
     <div class="types">
     <h2>分类浏览</h2>
@@ -43,6 +43,8 @@ export default {
       novel: state => state.book.novel,
       travel: state => state.book.travel,
       top: state=>state.book.top,
+      recommendtop: state=>state.book.recommendtop,
+      topuser: state=>state.book.topuser,
       uid: state => state.user.uid
     })
   },

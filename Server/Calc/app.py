@@ -1,4 +1,5 @@
 from flask import Blueprint
+from flask_cors import CORS
 main = Blueprint('main', __name__)
  
 import json
@@ -7,36 +8,24 @@ import cherrypy
 from engine import RecommendationEngine
 from dao import Dao
 from flask import Flask, request, Response
-import cherrypy_cors
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def CORS():
-    cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
-    cherrypy.response.headers["Access-Control-Allow-Methods"] = "GET, POST, HEAD, PUT, DELETE"
-
-
-cherrypy.tools.CORS = cherrypy.Tool('before_finalize', CORS)
-
- 
-@main.route("/<int:user_id>/ratings/top/<int:count>", methods=["GET"])
+@main.route("/ratings/top/<int:user_id>/<int:count>", methods=["GET"])
 def top_ratings(user_id, count):
     logger.debug("User %s TOP ratings requested", user_id)
     top_ratings = recommendation_engine.get_top_ratings(user_id,count)
     return json.dumps(top_ratings)
 
-@main.route("/<int:user_id>/ratings/<string:book_id>", methods=["GET"])
+
+@main.route("/ratings/<int:user_id>/<string:book_id>", methods=["GET"])
 def book_ratings(user_id, book_id):
     logger.debug("User %s rating requested for book %s", user_id, book_id)
     hash_book_id = abs(hash(book_id)) % (10 ** 8)
     ratings = recommendation_engine.get_ratings_for_book_ids(user_id, [hash_book_id])
     return json.dumps(ratings)
  
-@main.route("/<int:num>/ratings", methods = ["POST"])
-def top_books(num):
-    return []
-
 
 @main.route("/<int:user_id>/ratings", methods = ["POST"])
 def add_ratings(user_id):
@@ -52,9 +41,7 @@ def add_ratings(user_id):
 
 @main.route("/login/<int:user_id>", methods=["POST"])
 def login(user_id):
-    enablecors()
-    return 'abc'
-    # return dbdao.login(user_id)
+    return dbdao.login(user_id)
 
 
 @main.route("/logout", methods=["POST"])
@@ -78,16 +65,11 @@ def toptags(num):
 def toptagbooks(tagid, num):
     return dbdao.get_top_tag_books(tagid,num)
 
-def enablecors():
-    cherrypy.response.headers["Content-Type"] = "application/javascript"
-    cherrypy.response.headers["Access-Control-Allow-Origin"] = "*"
-    cherrypy.response.headers["Access-Control-Allow-Methods"] = "GET, POST, HEAD, PUT, DELETE"
-
 def create_app(spark_context, dataset_path):
-    cherrypy_cors.install()
     global recommendation_engine,dbdao
-    # recommendation_engine = RecommendationEngine(spark_context, dataset_path)    
+    recommendation_engine = RecommendationEngine(spark_context, dataset_path)    
     app = Flask(__name__)
+    CORS(app)
     app.register_blueprint(main)
     dbdao=Dao()
     return app 

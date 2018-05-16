@@ -75,7 +75,7 @@ export default {
     },
     onSuccess (res){
       // console.log('complete!')
-      this.$router.push({name: 'StatusView'})
+      this.$router.push({name: 'BookView'})
     },
     onError (err) {
       // console.log(err)

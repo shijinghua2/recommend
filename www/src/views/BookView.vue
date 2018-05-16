@@ -1,9 +1,12 @@
 <template>
   <div class="movie-view has-header">
-    <sub-nav mold="quickNav"></sub-nav>
+    <!-- <sub-nav mold="quickNav"></sub-nav> -->
     <user-bar></user-bar>
+    <scroller title="评分最高" type="hasCover" :items="top"></scroller>
+    <scroller title="为你推荐" type="hasCover" v-if="uid" :items="travel"></scroller>
     <scroller title="热门图书榜" type="hasCover" :items="novel"></scroller>
-    <scroller title="为你推荐" type="hasCover" :items="travel"></scroller>
+    
+    
     <div class="types">
     <h2>分类浏览</h2>
     <div class="content">
@@ -39,6 +42,8 @@ export default {
     ...mapState({
       novel: state => state.book.novel,
       travel: state => state.book.travel,
+      top: state=>state.book.top,
+      uid: state => state.user.uid
     })
   },
   methods: {

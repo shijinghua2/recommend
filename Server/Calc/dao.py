@@ -3,12 +3,15 @@ import uuid
 import datetime
 import redis
 import sqlite3
+import threading
 import json
 
 
 class Dao:   
     # pool = redis.ConnectionPool(host='47.106.32.55', port=6379, decode_responses=True)
     def __init__(self):
+        global sem
+        sem = threading.RLock()
         self.redis=redis.Redis(host='47.106.32.55',port=6379, db=0,password='sjhdabendan')    
         try:        
             p = os.path.dirname(__file__)
@@ -22,9 +25,11 @@ class Dao:
         key = 'topbooks_100'
         cacheds = self.redis.get(key)
         if cacheds == None or cacheds == '':
+            sem.acquire()
             # 从数据库里取出
             self.sqlcursor.execute('select * from [BX-Books] order by [Book-Avg-Rating] desc limit 0,100')
             dbed=self.sqlcursor.fetchall()
+            sem.release()
             datas=[]
             for row in dbed:
                 datas.append({
@@ -44,7 +49,7 @@ class Dao:
         else:
             datas = json.loads(cacheds)
         num = 20 if num>20 else (num if num>0 else 10)
-        return JSON.dumps(datas[:num])
+        return json.dumps(datas[:num])
         
     # 获取评分最高的标签
     def get_top_tags(self, num=10):
@@ -53,9 +58,11 @@ class Dao:
         key = 'toptags_100'
         cacheds = self.redis.get(key)
         if cacheds == None or cacheds == '':
+            sem.acquire()
             # 从数据库里取出
             self.sqlcursor.execute('select * from [BX-Tags] order by [Rate-Avg] desc limit 0,100')
             dbed = self.sqlcursor.fetchall()
+            sem.release()
             datas = []
             for row in dbed:
                 datas.append({
@@ -76,10 +83,12 @@ class Dao:
         key = 'topbooks_100'
         cacheds = self.redis.get(key)
         if cacheds == None or cacheds == '':
+            sem.acquire()
             # 从数据库里取出
             self.sqlcursor.execute(
                 'sselect * from [bx-books] where isbn in (select isbn from [bx-book-tags] where [tag-id]={0}) order by [book-avg-rating] desc limit 0,100'.format(tagid))
             dbed = self.sqlcursor.fetchall()
+            sem.release()
             datas = []
             for row in dbed:
                 datas.append({
@@ -103,9 +112,11 @@ class Dao:
     
     # 登陆
     def login(self, uid):
+        sem.acquire()
         # 从数据库里取出
         self.sqlcursor.execute('select * from [bx-Users] where [User-ID]='+str(uid))
         dbed = self.sqlcursor.fetchone()
+        sem.release()
         if dbed is None:
             return -1
         user={
@@ -115,18 +126,22 @@ class Dao:
         }
         guid = str(uuid.uuid1())
         now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        sem.acquire()
         self.sqlcursor.execute('delete from [bx-login] where [user-id]='+str(uid))
         self.sqlcursor.execute("insert into [bx-login] values({0},'{1}','{2}')".format(uid, guid, now))
         self.sqlite.commit()
+        sem.release()
         user['guid']=guid
         return json.dumps(user)
 
     # 退出登录
     def logout(self, guid):
+        sem.acquire()
         # 从数据库里取出
         self.sqlcursor.execute(
             'delete from [bx-login] where [user-id]='+str(uid))
         self.sqlite.commit()
+        sem.release()
         return 1
 
     def __del__(self):

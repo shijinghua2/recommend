@@ -4,7 +4,7 @@
     <div class="navBottom" v-if="mold === 'navBottom'">
       <div class="nav-item">
         <!-- replace blank-->
-        <template v-if="currentUser.email">
+        <template v-if="currentUser.uid">
           <a href="#" @click.prevent="logout()">退出登录</a>
         </template>
         <template v-else>
@@ -16,12 +16,12 @@
     <div class="quickNav" v-if="mold === 'quickNav'">
       <ul class="quick-nav">
         <li>
-          <template v-if="currentUser.email">
-            <a href="#" @click.prevent="logout()">退出登录</a>
-          </template>
-          <template v-else>
+          <template v-if="!currentUser.uid">
             <router-link :to="{name: 'LoginView'}" replace>登录系统</router-link>
           </template>
+          <!-- <template v-else>
+            <a href="#" @click.prevent="logout()">退出登录</a>            
+          </template> -->
         </li>
       </ul>
     </div>
@@ -57,7 +57,7 @@ export default {
       this.$store.commit({
         type: 'logout'
       })
-      this.$router.push({name: 'HomeView'})
+      this.$router.push({name: 'BookView'})
     }
   },
   created () {

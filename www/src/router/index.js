@@ -13,6 +13,7 @@ export default new Router({
   routes: [
     {
       path: '/',
+      name: 'HomeView',
       redirect: '/pages/book'
     },
     {

@@ -7,7 +7,7 @@
     <div class="content">
       <slot name="promItem"></slot>
       <ul class="hasCover" v-if="type === 'hasCover'">
-        <li v-for="(item,index) in items" :key="index">
+        <li v-for="(item,index) in items" :key="index" v-if="item.images.large">
           <router-link :to="'subject/' + item.id" append>
             <img v-if="item.images" :src="item.images.large" alt="">
             <span class="title">{{item.title}}</span>

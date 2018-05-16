@@ -1,9 +1,5 @@
 import request from 'superagent'
-
-const api='http://127.0.0.1:5432'
-let apiUrl=function(url){
-  return `${api}/${url}`
-}
+import common from './common'
 const state = {
   uid:'',
   location:'',
@@ -76,9 +72,12 @@ const actions = {
   login ({ commit }, payload) {
     return new Promise((resolve, reject) => {
       request
-        .post(apiUrl ('login/' + payload.uid))
+        .post(common.apiUrl ('login/' + payload.uid))
 
         .then(res => {
+          if(!res.body){
+            res.body=JSON.parse(res.text)
+          }
           commit({
             type: 'setUser',
             uid: res.body.uid,

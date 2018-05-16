@@ -31,10 +31,6 @@ def run_server(app):
         'log.screen': True,
         'server.socket_port': 5432,
         'server.socket_host': '0.0.0.0'
-        # 'tools.CORS.on': True,
-        # 'cors.expose.on': True,
-        # 'tools.response_headers.on': True,
-        # 'tools.response_headers.headers': [('Access-Control-Allow-Origin', '*'), ("Access-Control-Allow-Methods", "GET, POST, HEAD, PUT, DELETE"), ("Access-Control-Max-Age","1782000")]
     })
     # Start the CherryPy WSGI web server
     cherrypy.engine.start()
@@ -44,10 +40,7 @@ def run_server(app):
  
 if __name__ == "__main__":
     # Init spark context and load libraries
-    # sc = init_spark_context()
-    sc=None
-    #  dataset_path = os.path.join('../Data', 'BX-CSV-Dump')
-    # dataset_path = os.path.join('../Data')
+    sc = init_spark_context()
     dataset_path = os.path.abspath(os.path.join(os.getcwd(), '../Data'))
     app = create_app(sc, dataset_path)
     # start web server

@@ -1,7 +1,7 @@
 <template>
   <router-link class="user-bar" :to="{ name: currentLink}" tag="div">
     <div class="avatar">
-      <template v-if="currentUser.name">
+      <template v-if="currentUser.uid">
         <img src="../assets/avatar.png" alt="avatar">
       </template>
       <template v-else>
@@ -9,8 +9,13 @@
       </template>
     </div>
     <div class="holder">{{holder}}</div>
-    <div class="icon icon-camera"></div>
-    <div class="icon icon-pen"></div>
+    
+    <template v-if="currentUser.uid">
+      <div class="logout" @click="logout()">
+        <a href="#" @click="logout()" class="btn-logout">退出登录</a>
+      </div>
+    </template>
+    
   </router-link>
 </template>
 
@@ -23,12 +28,22 @@ export default {
     return {
     }
   },
+  methods:{
+    logout () {
+      alert(1)
+      debugger
+      this.$store.commit({
+        type: 'logout'
+      })
+      this.$router.push({name: 'BookView'})
+    }
+  },
   computed: {
     currentLink: function () {
-      return this.currentUser.name ? 'HomeView' : 'LoginView'
+      return this.currentUser.uid ? 'BookView' : 'LoginView'
     },
     holder: function () {
-      return this.currentUser.name ? this.currentUser.name : '请先登录'
+      return this.currentUser.uid ? this.currentUser.uid : '请先登录'
     },
     // Map store/user state
     ...mapGetters(['currentUser'])
@@ -71,7 +86,7 @@ export default {
   }
 
   .icon {
-    content: '';
+    content: "";
     width: 4rem;
     height: 4rem;
     padding: 0.8rem;
@@ -81,7 +96,7 @@ export default {
   }
 
   .icon::before {
-    content: '';
+    content: "";
     position: absolute;
     width: 2.4rem;
     height: 2.4rem;
@@ -98,13 +113,24 @@ export default {
   }
 
   &:before {
-    content: '';
+    content: "";
     position: absolute;
     left: 0;
     bottom: 0;
     width: 100%;
     height: 0.1rem;
-    background: #E8E8E8;
+    background: #e8e8e8;
+  }
+  .logout {
+    float: right;
+    .btn-logout {
+      // border: 1px solid #42bd56;
+      line-height: 4rem;
+      font-size: 1.5rem;
+      padding: 0.3rem;
+      color: #aaa;
+      border-radius: 10%;
+    }
   }
 }
 </style>

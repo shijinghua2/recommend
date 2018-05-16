@@ -126,7 +126,7 @@ spark-submit server.py
 
 输入UID进行登录，登录信息保存在 sqlite 里面，前端使用localStorage进行存储
 
-登陆的UID从有评分的用户里面取
+登陆的UID从有评分的用户里面取，比如 233737
 
 ### 评分最高
 

@@ -80,7 +80,7 @@ class Dao:
 
     # 获取某一标签评分最高的书
     def get_top_tag_books(self,tagid, num=10):
-        key = 'toptagbooks_'+tagid+'_100'
+        key = 'toptagbooks_'+str(tagid)+'_100'
         cacheds = self.redis.get(key)
         if cacheds == None or cacheds == '':
             sem.acquire()
@@ -112,7 +112,7 @@ class Dao:
     
     # 获取用户评分过的书籍
     def get_top_user_books(self, userid, num=10):
-        key = 'topuserbooks_'+userid+'_100'
+        key = 'topuserbooks_'+str(userid)+'_100'
         cacheds = self.redis.get(key)
         if cacheds == None or cacheds == '':
             sem.acquire()

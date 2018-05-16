@@ -67,7 +67,7 @@ def toptagbooks(tagid, num):
 
 
 @main.route('/top_user_books/<int:userid>/<int:num>', methods=['GET'])
-def toptagbooks(userid, num):
+def topuserbooks(userid, num):
     return dbdao.get_top_user_books(userid, num)
 
 def create_app(spark_context, dataset_path):

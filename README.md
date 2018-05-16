@@ -105,10 +105,21 @@ https://blog.csdn.net/ul646691993/article/details/52736279
 
 ## 操作
 
+
 为什么有了Spark还要再用一个数据库，因为数据库对于结构化的数据很友好，存取筛选起来比较清晰，而Spark主要用于计算，本实例中，Spark用于计算推荐给用户的书籍及预测用户评分
 
 
 进行计算的时候可以访问 http://47.106.32.55:4040 实时查看任务状态
+
+
+## 启动服务端
+
+使用SSH工具连接上阿里云主机，执行
+
+```bash
+cd /root/git/recommend/Server/Calc
+spark-submit server.py
+```
 
 
 ### 登录

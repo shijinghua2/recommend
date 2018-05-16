@@ -80,13 +80,13 @@ class Dao:
 
     # 获取某一标签评分最高的书
     def get_top_tag_books(self,tagid, num=10):
-        key = 'topbooks_100'
+        key = 'toptagbooks_'+tagid+'_100'
         cacheds = self.redis.get(key)
         if cacheds == None or cacheds == '':
             sem.acquire()
             # 从数据库里取出
             self.sqlcursor.execute(
-                'sselect * from [bx-books] where isbn in (select isbn from [bx-book-tags] where [tag-id]={0}) order by [book-avg-rating] desc limit 0,100'.format(tagid))
+                'select * from [bx-books] where isbn in (select isbn from [bx-book-tags] where [tag-id]={0}) order by [book-avg-rating] desc limit 0,100'.format(tagid))
             dbed = self.sqlcursor.fetchall()
             sem.release()
             datas = []
@@ -110,6 +110,39 @@ class Dao:
         num = 20 if num > 20 else (num if num > 0 else 10)
         return json.dumps(datas[:num])
     
+    # 获取用户评分过的书籍
+    def get_top_user_books(self, userid, num=10):
+        key = 'topuserbooks_'+userid+'_100'
+        cacheds = self.redis.get(key)
+        if cacheds == None or cacheds == '':
+            sem.acquire()
+            # 从数据库里取出
+            self.sqlcursor.execute(
+                'sselect * from [bx-books] where isbn in (select isbn from [bx-book-ratings] where [user-id]={0}) order by [book-avg-rating] desc limit 0,100'.format(userid))
+            dbed = self.sqlcursor.fetchall()
+            sem.release()
+            datas = []
+            for row in dbed:
+                datas.append({
+                    'isbn': row[0],
+                    'title': row[1],
+                    'author': row[2],
+                    'year': row[3],
+                    'publisher': row[4],
+                    'imgs': row[5],
+                    'imgm': row[6],
+                    'imgl': row[7],
+                    'avgr': row[8]
+                })
+
+            # 存到redis中
+            self.redis.set(key, json.dumps(datas), 60*60)
+        else:
+            datas = json.loads(cacheds)
+        num = 20 if num > 20 else (num if num > 0 else 10)
+        return json.dumps(datas[:num])
+
+
     # 登陆
     def login(self, uid):
         sem.acquire()

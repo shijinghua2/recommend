@@ -6,7 +6,8 @@ const state = {
   novel: [],          // 小说 豆瓣
   travel: [],         // 旅行 豆瓣
   top: [],            // 评分最高 sqlite
-  recommendtop:[]     // 推荐算法 spark
+  recommendtop:[],     // 推荐算法 spark
+  topuser: []         // 用户评分过的书籍
 }
 
 
@@ -24,6 +25,9 @@ const mutations = {
         break
       case 'recommendtop':
         state.recommendtop=payload.res
+        break
+      case 'topuser':
+        state.topuser = payload.res
         break
       default:
         state.novel = payload.res
@@ -69,6 +73,48 @@ const actions = {
 
 
   },
+
+
+  getUserRatings({
+    commit
+  }, payload) {
+    
+    request
+      .get(common.apiUrl(`top_user_books/${payload.uid}/${payload.count}`))
+
+      .end((err, res) => {
+        if (err) return
+        if (!res.body) {
+          res.body = JSON.parse(res.text)
+        }
+        commit({
+          type: 'getBook',
+          tag: 'topuser',
+          res: res.body.map(x => {
+            return {
+              id: x.isbn,
+              images: {
+                large: x.imgl,
+                medium: x.imgm,
+                small: x.imgs
+              },
+              title: x.title,
+              isbn10: x.isbn,
+              rating: {
+                average: x.avgr,
+                min: 0,
+                max: 10,
+                numraters: 2
+              }
+            }
+          })
+        })
+      })
+
+
+
+  },
+
 
 
   /**

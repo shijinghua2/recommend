@@ -65,6 +65,11 @@ def toptags(num):
 def toptagbooks(tagid, num):
     return dbdao.get_top_tag_books(tagid,num)
 
+
+@main.route('/top_user_books/<int:userid>/<int:num>', methods=['GET'])
+def toptagbooks(userid, num):
+    return dbdao.get_top_user_books(userid, num)
+
 def create_app(spark_context, dataset_path):
     global recommendation_engine,dbdao
     recommendation_engine = RecommendationEngine(spark_context, dataset_path)    

@@ -3,10 +3,12 @@ import os
 import sqlite3
 
 
-conn=sqlite3.connect('../Data/Book_db.db')
+p = os.path.dirname(__file__)
+conn = sqlite3.connect(os.path.join(p, '../Data/Book.db'), check_same_thread=False)
+
 c=conn.cursor()
 
-path = os.path.join('../Data')
+path = os.path.join(p,'../Data')
 
 def dealOnefile(file):
     with open(os.path.join(path,file+'.csv'),mode='r',encoding='utf-8',errors='ignore') as ofile:
@@ -27,9 +29,9 @@ def dealOnefile(file):
                 if len(rrow) < len(fieldnames):
                     continue
 
-                # executeSql+= ','.join(rrow) +')'
+                executeSql+= ','.join(rrow) +')'
                 # print(executeSql)
-                # c.execute(executeSql)
+                c.execute(executeSql)
                 # break
                 o=dict()
 

@@ -108,8 +108,9 @@ class RecommendationEngine:
         ratings_raw_data_header = ratings_raw_RDD.take(1)[0]
         self.ratings_RDD = ratings_raw_RDD.filter(lambda line: line!=ratings_raw_data_header)\
             .map(self.__split)\
+            #.map(lambda line: line.split(';'))\
             .filter(lambda tokens:len(tokens)==3)\
-            .map(lambda tokens: (int(tokens[0][1:-1]), abs(hash(tokens[1][1:-1])) % (10 ** 8), int(tokens[2][1:-1]))).cache()
+            #.map(lambda tokens: (int(tokens[0][1:-1]), abs(hash(tokens[1][1:-1])) % (10 ** 8), int(tokens[2][1:-1]))).cache()
         # Load books data for later use
         logger.info("Loading Books data...")
         books_file_path = ('file://' if os.name != 'nt' else '')  + os.path.join(dataset_path, 'BX-Books.csv')

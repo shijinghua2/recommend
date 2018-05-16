@@ -118,7 +118,7 @@ class Dao:
             sem.acquire()
             # 从数据库里取出
             self.sqlcursor.execute(
-                'sselect * from [bx-books] where isbn in (select isbn from [bx-book-ratings] where [user-id]={0}) order by [book-avg-rating] desc limit 0,100'.format(userid))
+                'select * from [bx-books] where isbn in (select isbn from [bx-book-ratings] where [user-id]={0}) order by [book-avg-rating] desc limit 0,100'.format(userid))
             dbed = self.sqlcursor.fetchall()
             sem.release()
             datas = []

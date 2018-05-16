@@ -106,10 +106,6 @@ class RecommendationEngine:
         ratings_file_path =('file://' if os.name != 'nt' else '')  + os.path.join(dataset_path, 'BX-Book-Ratings.csv')
         ratings_raw_RDD = self.sc.textFile(ratings_file_path)
 
-
-        print('\n\n\n')
-        print(ratings_raw_RDD.collect())
-        print('\n\n\n')
         ratings_raw_data_header = ratings_raw_RDD.take(1)[0]
         self.ratings_RDD = ratings_raw_RDD.filter(lambda line: line!=ratings_raw_data_header)\
             .map(lambda line: line.split(';'))\

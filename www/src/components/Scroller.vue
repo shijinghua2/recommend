@@ -108,7 +108,8 @@ export default {
   white-space: nowrap;
 
   li {
-    display: inline-block;
+    //display: inline-block;
+    display: block;
     margin: 0 0 0.8rem 1.6rem;
     font-size: 1.6rem;
     border: solid 0.1rem;

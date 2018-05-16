@@ -53,8 +53,6 @@ class Dao:
         
     # 获取评分最高的标签
     def get_top_tags(self, num=10):
-        if tagid is None:
-            return []
         key = 'toptags_100'
         cacheds = self.redis.get(key)
         if cacheds == None or cacheds == '':

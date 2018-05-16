@@ -7,7 +7,8 @@ const state = {
   travel: [],         // 旅行 豆瓣
   top: [],            // 评分最高 sqlite
   recommendtop:[],     // 推荐算法 spark
-  topuser: []         // 用户评分过的书籍
+  topuser: [],         // 用户评分过的书籍
+  togtag:[]
 }
 
 
@@ -28,6 +29,9 @@ const mutations = {
         break
       case 'topuser':
         state.topuser = payload.res
+        break
+      case 'toptag':
+        state.toptag = payload.res
         break
       default:
         state.novel = payload.res
@@ -59,14 +63,16 @@ const actions = {
                   medium: x.imgm,
                   small: x.imgs
                 },
-                title: x.title,
+                title: x.Title,
                 isbn10: x.isbn,
                 rating: {
-                  average: x.avgr,
+                  average: x.Rating,
                   min: 0,
                   max: 10,
-                  numraters: 2
-                }
+                  numraters: x.Count
+                },
+                href:'javascript:void(0)',
+                color:'#333'
               }
             })
           })
@@ -113,6 +119,38 @@ const actions = {
       })
 
 
+
+  },
+
+  getTopTags({
+    commit
+  },payload){
+    request
+      .get(common.apiUrl(`top_tags/${payload.count}`))
+
+      .end((err, res) => {
+        if (err) return
+        if (!res.body) {
+          res.body = JSON.parse(res.text)
+        }
+        commit({
+          type: 'getBook',
+          tag: 'toptag',
+          res: res.body.map(x => {
+            return {
+              id: x.id,
+              title: x.Name,
+              isbn10: x.isbn,
+              rating: {
+                average: x.avgr,
+                min: 0,
+                max: 10,
+                numraters: 2
+              }
+            }
+          })
+        })
+      })
 
   },
 

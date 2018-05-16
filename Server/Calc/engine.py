@@ -89,6 +89,10 @@ class RecommendationEngine:
 
         return self.__list_to_json(ratings)
 
+    def __split(line):
+        print(line)
+        return line.split(';')
+
     def __init__(self, sc, dataset_path):
         """Init the recommendation engine given a Spark context and a dataset path
         """
@@ -103,7 +107,7 @@ class RecommendationEngine:
         ratings_raw_RDD = self.sc.textFile(ratings_file_path)
         ratings_raw_data_header = ratings_raw_RDD.take(1)[0]
         self.ratings_RDD = ratings_raw_RDD.filter(lambda line: line!=ratings_raw_data_header)\
-            .map(lambda line: line.split(";"))\
+            .map(__split)\
             .filter(lambda tokens:len(tokens)==3)\
             .map(lambda tokens: (int(tokens[0][1:-1]), abs(hash(tokens[1][1:-1])) % (10 ** 8), int(tokens[2][1:-1]))).cache()
         # Load books data for later use

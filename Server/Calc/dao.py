@@ -12,7 +12,7 @@ class Dao:
     def __init__(self):
         global sem
         sem = threading.RLock()
-        self.redis=redis.Redis(host='47.106.32.55',port=6379, db=0,password='sjhdabendan')    
+        self.redis=redis.Redis(host='127.0.0.1',port=6379, db=0,password='sjhdabendan')    
         try:        
             p = os.path.dirname(__file__)
             self.sqlite = sqlite3.connect(os.path.join(p, '../Data/Book.db'), check_same_thread=False)

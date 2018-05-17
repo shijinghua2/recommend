@@ -38,7 +38,7 @@ export default {
   components: { Scroller,UserBar, SubNav, Tags},
   data () {
     return {
-      itemms:[]
+      itemms:[1]
     }
   },
   computed: {

@@ -12,7 +12,8 @@ class Dao:
     def __init__(self):
         global sem
         sem = threading.RLock()
-        self.redis=redis.Redis(host='127.0.0.1',port=6379, db=0,password='sjhdabendan')    
+        self.redis = redis.Redis(
+            host='127.0.0.1', port=6379, db=0, password='sjhdabendan')
         try:        
             p = os.path.dirname(__file__)
             self.sqlite = sqlite3.connect(os.path.join(p, '../Data/Book.db'), check_same_thread=False)
@@ -63,6 +64,7 @@ class Dao:
         cacheds = self.get_redis(key)
         if cacheds == None or cacheds == '':
             sem.acquire()
+            print('\n\n\n\n\n\n'+name+'\n\n\n')
             # 从数据库里取出
             self.sqlcursor.execute(
                 "select * from [BX-Books] where [Book-Title] in ("+name+") order by [Book-Avg-Rating] desc limit 0,100")
@@ -86,8 +88,7 @@ class Dao:
             self.set_redis(key, datas)
         else:
             datas = json.loads(cacheds)
-        num = 20 if num > 20 else (num if num > 0 else 10)
-        return json.dumps(datas[:num])
+        return json.dumps(datas)
         
     # 获取评分最高的标签
     def get_top_tags(self, num=10):
@@ -218,4 +219,5 @@ class Dao:
 
 if __name__=='__main__':
     dao = Dao()
+    dao.get_booksbyname("'a','b','c'")
     print(dao.login(13))

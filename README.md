@@ -121,6 +121,8 @@ cd /root/git/recommend/Server/Calc
 spark-submit server.py
 ```
 
+看到 `ENGINE Bus STARTED` 表示启动成功
+
 
 ### 登录
 

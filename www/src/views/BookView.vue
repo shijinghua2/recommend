@@ -4,7 +4,7 @@
     <user-bar></user-bar>
     <scroller title="评分最高" type="hasCover" :items="top"></scroller>
     <scroller title="您的最爱" type="hasCover" v-if="uid" :items="topuser"></scroller>
-    <scroller title="为您推荐" type="onlyString" v-if="uid" :items="recommendtop"></scroller>
+    <scroller title="为您推荐" :loadingstr="正在定制您的专属书籍" type="onlyString" v-if="uid" :items="recommendtop"></scroller>
     <!-- <scroller title="热门图书榜" type="hasCover" :items="novel"></scroller>     -->
     
     <div class="types">

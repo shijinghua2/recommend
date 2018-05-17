@@ -8,18 +8,13 @@ const state = {
   top: [], // 评分最高 sqlite
   recommendtop: [], // 推荐算法 spark
   topuser: [], // 用户评分过的书籍
-  togtag: []
+  toptag:[]
+  
 }
 
 const mutations = {
   getBook(state, payload) {
     switch (payload.tag) {
-      case 'novel':
-        state.novel = payload.res
-        break
-      case 'travel':
-        state.travel = payload.res
-        break
       case 'top':
         state.top = payload.res
         break
@@ -32,8 +27,6 @@ const mutations = {
       case 'toptag':
         state.toptag = payload.res
         break
-      default:
-        state.novel = payload.res
     }
   }
 }
@@ -77,11 +70,9 @@ const actions = {
       })
   },
 
-
   getUserRatings({
     commit
   }, payload) {
-
     request
       .get(common.apiUrl(`top_user_books/${payload.uid}/${payload.count}`))
 
@@ -113,37 +104,7 @@ const actions = {
           })
         })
       })
-
-
-
   },
-
-  getTopTags({
-    commit
-  }, payload) {
-    request
-      .get(common.apiUrl(`top_tags/${payload.count}`))
-      .end((err, res) => {
-        if (err) return
-        if (!res.body) {
-          res.body = JSON.parse(res.text)
-        }
-        commit({
-          type: 'getBook',
-          tag: 'toptag',
-          res: res.body.map(x => {
-            return {
-              id: x.id,
-              name: x.name,
-              avgr: x.avgr
-            }
-          })
-        })
-      })
-
-  },
-
-
 
   /**
    * Getting books
@@ -153,31 +114,6 @@ const actions = {
   getBook({
     commit
   }) {
-    request
-      .get('https://api.douban.com/v2/book/search?q=虚构类&count=8')
-      .use(jsonp)
-      .end((err, res) => {
-        if (!err) {
-          commit({
-            type: 'getBook',
-            tag: 'novel',
-            res: res.body.books
-          })
-        }
-      })
-    request
-      .get('https://api.douban.com/v2/book/search?q=旅行&count=8')
-      .use(jsonp)
-      .end((err, res) => {
-        if (!err) {
-          commit({
-            type: 'getBook',
-            tag: 'travel',
-            res: res.body.books
-          })
-        }
-      })
-
     request
       .get(common.apiUrl('top_books/20'))
       .end((err, res) => {
@@ -204,6 +140,26 @@ const actions = {
                 max: 10,
                 numraters: 2
               }
+            }
+          })
+        })
+      })
+
+    request
+      .get(common.apiUrl(`top_tags/10`))
+      .end((err, res) => {
+        if (err) return
+        if (!res.body) {
+          res.body = JSON.parse(res.text)
+        }
+        commit({
+          type: 'getBook',
+          tag: 'toptag',
+          res: res.body.map(x => {
+            return {
+              id: x.id,
+              name: x.name,
+              avgr: x.avgr
             }
           })
         })

@@ -1,5 +1,9 @@
 <template>
-  <div class="scroller">
+  
+  <div>
+    <loading v-if="!loaded"/>
+  
+  <div v-else class="scroller">    
     <div class="header">
       <h2>{{title}}</h2>
     </div>
@@ -9,14 +13,15 @@
         <li v-for="(item,index) in items" :key="index" v-if="item.images.large">
           <div class="book">
             <img v-if="item.images" :src="item.images.large" alt="">            
-            <rating v-if="item.rating" :rating="item.rating"></rating>
           </div>
           <div class="rate">
             <span class="title">{{item.title}}</span>
             <a href="#" class="ratebtn" @click="getrating(item.id,status[item.id])">
-              <i class="icon-loading" v-if="status[item.id]==-1" />
+              <template v-if="status[item.id]==-1">
+                <i class="icon-loading"  /> 获取中
+              </template>
               <template v-if="!status[item.id]">
-                评分
+                获取评分
               </template>
               <template v-if="status[item.id] && status[item.id] !=-1">
                 {{status[item.id]}}
@@ -33,77 +38,88 @@
       </ul>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
+import request from "superagent";
+import common from "../store/modules/common";
+import loading from "./Loading";
+import { mapState } from "vuex";
 
-import request from 'superagent'
-import common from '../store/modules/common'
-import { mapState } from 'vuex'
 export default {
-  name: 'scroller',
-  data () {
+  name: "scroller",
+  data() {
     return {
-      items:[],
-      title:decodeURIComponent(this.$route.params.name),
-      status:{}
-    }
+      items: [],
+      title: decodeURIComponent(this.$route.params.name),
+      status: {},
+      loaded: false
+    };
   },
-    computed: {
+  components: { loading },
+  computed: {
     // Getting Vuex State from store/modules/book
     ...mapState({
       uid: state => state.user.uid
     })
   },
-  methods:{
-    getrating(isbn,flag){
-      if(flag==-1){
-        return
-      }
-      if(!this.uid){
-        this.$route.push({name:'LoginView'})
-      }
-      this.status[isbn]=-1
-      request.get(common.apiUrl( `book_ratings/${uid}/${isbn}`))
-        .end((err,res)=>{
-          if(err) return
-          this.status[isbn]=res.text
-        })
+  watch: {
+    status: {
+      handler: (n, o) => {},
+      deep: true
     }
   },
-  created(){
-    
+  methods: {
+    getrating(isbn, flag) {
+      if (flag !== undefined) {
+        return;
+      }
+      if (!this.uid) {
+        this.$route.push({ name: "LoginView" });
+      }
+      this.$set(this.status, isbn, -1);
+
+      request
+        .get(common.apiUrl(`ratings/${this.uid}/${isbn}`))
+
+        .end((err, res) => {
+          if (err) return;
+          let body = JSON.parse(res.text);
+          this.$set(this.status, isbn, body[0].Rating.toFixed(1));
+        });
+    }
+  },
+  created() {
     request
       .get(common.apiUrl(`top_tag_books/${this.$route.params.id}/${8}`))
       .end((err, res) => {
-        if (err) return
+        if (err) return;
+        this.loaded = true;
         if (!res.body) {
-          res.body = JSON.parse(res.text)
+          res.body = JSON.parse(res.text);
         }
-        this.items=res.body.map(x => {
-            return {
-              id: x.isbn,
-              images: {
-                large: x.imgl,
-                medium: x.imgm,
-                small: x.imgs
-              },
-              title: x.title,
-              isbn10: x.isbn,
-              rating: {
-                average: x.avgr,
-                min: 0,
-                max: 10,
-                numraters: 2
-              }
+        this.items = res.body.map(x => {
+          return {
+            id: x.isbn,
+            images: {
+              large: x.imgl,
+              medium: x.imgm,
+              small: x.imgs
+            },
+            title: x.title,
+            isbn10: x.isbn,
+            rating: {
+              average: x.avgr,
+              min: 0,
+              max: 10,
+              numraters: 2
             }
-          })
-      })
-
-
-
+          };
+        });
+      });
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>
@@ -154,15 +170,15 @@ export default {
     // display: inline-block;
     display: flex;
     padding: 1rem;
-    .book{
+    .book {
       width: 10rem;
     }
-    .rate{
+    .rate {
       position: relative;
       flex: 1;
-      padding-left:2rem;
+      padding-left: 2rem;
       width: 0;
-      .ratebtn{
+      .ratebtn {
         position: absolute;
         right: 0.5rem;
         bottom: 0.5rem;
@@ -171,8 +187,8 @@ export default {
         font-size: 1.7rem;
         text-align: center;
         color: #fff;
-        background: #17AA52;
-        border: 0.1rem solid #17AA52;
+        background: #17aa52;
+        border: 0.1rem solid #17aa52;
         border-radius: 0.3rem;
       }
     }
@@ -187,7 +203,7 @@ export default {
   }
 }
 
-.icon-loading{
+.icon-loading {
   display: inline-block;
   width: 1.8rem;
   height: 1.8rem !important;

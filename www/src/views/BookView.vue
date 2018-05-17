@@ -2,9 +2,9 @@
   <div class="movie-view has-header">
     <!-- <sub-nav mold="quickNav"></sub-nav> -->
     <user-bar></user-bar>
-    <scroller title="评分最高" type="hasCover" :items="top"></scroller>
-    <scroller title="您的最爱" type="hasCover" v-if="uid" :items="topuser"></scroller>
-    <scroller title="为您推荐" :loadingstr="'正在定制您的专属书籍'" type="onlyString" v-if="uid" :items="recommendtop"></scroller>
+    <scroller title="评分最高" type="hasCover" :loading="loading[0]" :items="top"></scroller>
+    <scroller title="您的最爱" type="hasCover" v-if="uid" :loading="loading[1]" :items="topuser"></scroller>
+    <scroller title="为您推荐" :loadingstr="'正在定制您的专属书籍'" :loading="loading[2]" type="onlyString" v-if="uid" :items="recommendtop"></scroller>
     <!-- <scroller title="热门图书榜" type="hasCover" :items="novel"></scroller>     -->
     
     <div class="types">
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState ,mapGetters} from 'vuex'
 
 import Scroller from '../components/Scroller'
 import UserBar from '../components/UserBar'
@@ -33,40 +33,42 @@ export default {
   components: { Scroller,UserBar, SubNav, Tags},
   data () {
     return {
-      itemms:[1]
+      itemms:[1],
+      loading:[true,true,true]
     }
   },
   computed: {
     // Getting Vuex State from store/modules/book
     ...mapState({
-      novel: state => state.book.novel,
-      travel: state => state.book.travel,
+      uid: state => state.user.uid,
       top: state=>state.book.top,
       recommendtop: state=>state.book.recommendtop,
-      topuser: state=>state.book.topuser,
-      uid: state => state.user.uid,
+      topuser: state=>state.book.topuser,      
       toptag:state=>state.book.toptag
-
     })
   },
   methods: {
     // Dispatching getBook
     getBook: function () {
 
-      this.$store.dispatch('getBook')
-      this.$store.dispatch('getTopTags',{count:10})      
+      this.$store.dispatch('getBook').then(()=>{
+        this.loading[0]=false
+      })
+         
       // 如果有用户登陆了
       if(this.uid){
         // 获取为用户推荐的书籍
         this.$store.dispatch('getRecommend',{
           uid:this.uid,
           count:8
+        }).then(()=>{
+          this.loading[2]=false
         })
         // 获取用户评分过的书籍
         this.$store.dispatch('getUserRatings',{
           uid:this.uid,
           count:10
-        })        
+        })  
       }
       
     }

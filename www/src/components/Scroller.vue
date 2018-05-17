@@ -1,5 +1,7 @@
 <template>
-  <div class="scroller">
+<div>
+  <loading v-if="loading" />
+  <div class="scroller" v-else>
     <div class="header">
       <h2>{{title}}</h2>
     </div>
@@ -7,7 +9,7 @@
       <slot name="promItem"></slot>
       <ul class="hasCover" v-if="type === 'hasCover'">
         <li v-for="(item,index) in items" :key="index" v-if="item.images.large">
-          <router-link :to="'subject/' + item.id" append>
+          <router-link :to="'subject/' + item.id"  append>
             <img v-if="item.images" :src="item.images.large" alt="">
             <span class="title">{{item.title}}</span>
             <rating v-if="item.rating" :rating="item.rating"></rating>
@@ -21,15 +23,16 @@
       </ul>
     </div>
   </div>
+</div>
 </template>
 
 <script>
 import Rating from './Rating'
-
+import Loading from './Loading'
 export default {
   name: 'scroller',
-  props: ['title', 'type', 'items'],
-  components: { Rating },
+  props: ['title', 'type', 'items','loading'],
+  components: { Rating,Loading },
   data () {
     return {
 

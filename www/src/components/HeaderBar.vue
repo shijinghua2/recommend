@@ -2,19 +2,9 @@
   <div class="header-bar">
     <h1>
       图书推荐系统
+      <router-link class="goback" v-if="true" :to="'/'">首页</router-link>
+      <!-- <a href="#"  >返回</a> -->
     </h1>
-    <ul class="nav">
-      <li>
-        <!-- <router-link style="color: #9F7860" :to="{ name: 'RegisterView'}">
-          注册账号
-        </router-link>
-      </li>
-      <li>
-        <router-link style="color: green" :to="{ name: 'LoginView'}">
-          登录
-        </router-link> -->   
-      </li>
-    </ul>
   </div>
 </template>
 
@@ -22,13 +12,28 @@
 export default {
   name: 'header-bar',
   data () {
-    return {}
+    return {
+      showback:false
+    }
+  },
+  created(){
+    
+    this.showback=this.$route.path.indexOf('book')<0
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .header-bar {
+  h1{
+    display: block;
+    width:100%;
+    .goback{
+      display: block;
+      float:right;
+      color:#42bd56
+    }
+  }
   ul {
     display: flex;
     flex: 1;

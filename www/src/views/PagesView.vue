@@ -1,6 +1,6 @@
 <template>
   <div class="pages-view">
-    <header-bar ></header-bar>
+    <header-bar></header-bar>
     <router-view></router-view>
     
   </div>

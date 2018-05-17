@@ -1,11 +1,7 @@
 <template>
-  <div class="movie-view has-header">
+  <div class="movie-view has-header">    
     <!-- <sub-nav mold="quickNav"></sub-nav> -->
-    <user-bar></user-bar>
-    <Scroller2 title="评分最高" type="hasCover" :items="top"></scroller2>
-
-    
-    
+    <Scroller2 type="hasCover"></scroller2>
   </div>
 </template>
 
@@ -15,12 +11,14 @@ import { mapState } from 'vuex'
 import Scroller2 from '../components/Scroller2'
 
 
+
 export default {
-  name: 'book-view',
+  name: 'tag-book-view',
   components: { Scroller2},
   data () {
     return {
-      itemms:[]
+      itemms:[],
+      loaded:false
     }
   },
   computed: {
@@ -30,7 +28,9 @@ export default {
     getBook: function () {
 
       this.$store.dispatch('getBook')
-      this.$store.dispatch('getTopTags',{count:10})      
+      this.$store.dispatch('getTopTags',{count:10}).then(()=>{
+        this.loaded=true
+      })
       // 如果有用户登陆了
       if(this.uid){
         // 获取为用户推荐的书籍

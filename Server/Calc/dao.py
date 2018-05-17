@@ -64,7 +64,6 @@ class Dao:
         cacheds = self.get_redis(key)
         if cacheds == None or cacheds == '':
             sem.acquire()
-            print('\n\n\n\n\n\n'+name+'\n\n\n')
             # 从数据库里取出
             self.sqlcursor.execute(
                 "select * from [BX-Books] where [Book-Title] in ("+name+") order by [Book-Avg-Rating] desc limit 0,100")

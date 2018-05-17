@@ -2,7 +2,7 @@
   <div class="tags">
     <ul>
       <li v-for="(item,index) in items" :key="index">
-        <router-link :to="'tag/' + item.id+'/'+encodeURIComponent(item.name)" append>
+        <router-link :to="'/pages/tag/' + item.id+'/'+encodeURIComponent(item.name)" append>
           {{item.name ? item.name : item}}
         </router-link>
       </li>

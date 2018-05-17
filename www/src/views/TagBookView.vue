@@ -2,52 +2,28 @@
   <div class="movie-view has-header">
     <!-- <sub-nav mold="quickNav"></sub-nav> -->
     <user-bar></user-bar>
-    <scroller title="评分最高" type="hasCover" :items="top"></scroller>
-    <scroller title="您的最爱" type="hasCover" v-if="uid" :items="topuser"></scroller>
-    <scroller title="为您推荐" :loadingstr="'正在定制您的专属书籍'" type="onlyString" v-if="uid" :items="recommendtop"></scroller>
-    <!-- <scroller title="热门图书榜" type="hasCover" :items="novel"></scroller>     -->
+    <Scroller2 title="评分最高" type="hasCover" :items="top"></scroller2>
+
     
-    <div class="types">
-    <h2>分类浏览</h2>
-    <div class="content">
-      <ul class="type-list">
-        <div class="genres">
-            <tags :items="toptag"></tags>
-        </div>
-      </ul>
-    </div>
-  </div>
+    
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 
-import Scroller from '../components/Scroller'
-import UserBar from '../components/UserBar'
-import SubNav from '../components/SubNav'
-import Tags from '../components/Tags'
+import Scroller2 from '../components/Scroller2'
+
 
 export default {
   name: 'book-view',
-  components: { Scroller,UserBar, SubNav, Tags},
+  components: { Scroller2},
   data () {
     return {
-      itemms:[1]
+      itemms:[]
     }
   },
   computed: {
-    // Getting Vuex State from store/modules/book
-    ...mapState({
-      novel: state => state.book.novel,
-      travel: state => state.book.travel,
-      top: state=>state.book.top,
-      recommendtop: state=>state.book.recommendtop,
-      topuser: state=>state.book.topuser,
-      uid: state => state.user.uid,
-      toptag:state=>state.book.toptag
-
-    })
   },
   methods: {
     // Dispatching getBook

@@ -4,14 +4,14 @@ import Router from 'vue-router'
 import PagesView from '../views/PagesView'
 import BookView from '../views/BookView'
 import SubjectView from '../views/SubjectView'
+import TagBookView from '../views/TagBookView'
 import LoginView from '../views/LoginView'
 import RegisterView from '../views/RegisterView'
 
 Vue.use(Router)
 
 export default new Router({
-  routes: [
-    {
+  routes: [{
       path: '/',
       name: 'HomeView',
       redirect: '/pages/book'
@@ -19,8 +19,7 @@ export default new Router({
     {
       path: '/pages',
       component: PagesView,
-      children: [
-        {
+      children: [{
           path: '',
           redirect: '/pages/book'
         },
@@ -31,6 +30,15 @@ export default new Router({
         }
       ]
     },
+    {
+      path: '/pages/tag/:id/:name',
+      name: 'TagView',
+      components: {
+        default: PagesView,
+        subject: TagBookView
+      }
+    },
+
     {
       path: '/pages/:classify/subject/:id',
       name: 'SubjectView',

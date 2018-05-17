@@ -2,7 +2,6 @@
   <div class="scroller">
     <div class="header">
       <h2>{{title}}</h2>
-      <a href="#">更多</a>
     </div>
     <div class="content">
       <slot name="promItem"></slot>

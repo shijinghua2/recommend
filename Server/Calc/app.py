@@ -19,11 +19,11 @@ def top_ratings(user_id, count):
     if cached==None or cached=='':
         logger.debug("User %s TOP ratings requested", user_id)
         top_ratings = recommendation_engine.get_top_ratings(user_id,count)
-        # dbdao.set_redis(top_ratings)
-        strnames="'"+"','".join(list( map(lambda x: x['Title'], top_ratings)))+"'"
-        logger.debug(strnames)
-        result = dbdao.get_booksbyname(strnames)
-        cached = json.dumps(result)
+        dbdao.set_redis(top_ratings)
+        # strnames="'"+"','".join(list( map(lambda x: x['Title'], top_ratings)))+"'"
+        # logger.debug(strnames)
+        # result = dbdao.get_booksbyname(strnames)
+        cached = json.dumps(top_ratings)
     return cached
     
 

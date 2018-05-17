@@ -11,7 +11,6 @@ const state = {
   togtag: []
 }
 
-
 const mutations = {
   getBook(state, payload) {
     switch (payload.tag) {

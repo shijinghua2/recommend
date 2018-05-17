@@ -20,7 +20,7 @@ def top_ratings(user_id, count):
         logger.debug("User %s TOP ratings requested", user_id)
         top_ratings = recommendation_engine.get_top_ratings(user_id,count)
         # dbdao.set_redis(top_ratings)
-        strnames="'"+"','".join(list( map(lambda x: x.Title, top_ratings)))+"'"
+        strnames="'"+"','".join(list( map(lambda x: x['Title'], top_ratings)))+"'"
         result = dbdao.get_booksbyname(strnames)
         cached = json.dumps(result)
     return cached

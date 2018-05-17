@@ -14,20 +14,33 @@ logger = logging.getLogger(__name__)
 
 @main.route("/ratings/top/<int:user_id>/<int:count>", methods=["GET"])
 def top_ratings(user_id, count):
-    logger.debug("User %s TOP ratings requested", user_id)
-    top_ratings = recommendation_engine.get_top_ratings(user_id,count)
-    return json.dumps(top_ratings)
+    rediskey='toprating_{0}_{1}'.format(user_id,count)
+    cached=dbdao.get_redis(rediskey)
+    if cached==None or cached=='':
+        logger.debug("User %s TOP ratings requested", user_id)
+        top_ratings = recommendation_engine.get_top_ratings(user_id,count)
+        # dbdao.set_redis(top_ratings)
+        strnames="'"+"','".join(list( map(lambda x: x.Title, top_ratings)))+"'"
+        result = dbdao.get_booksbyname(strnames)
+        cached = json.dumps(result)
+    return cached
+    
 
 
 @main.route("/ratings/<int:user_id>/<string:book_id>", methods=["GET"])
 def book_ratings(user_id, book_id):
     logger.debug("User %s rating requested for book %s", user_id, book_id)
-    hash_book_id = abs(hash(book_id)) % (10 ** 8)
-    ratings = recommendation_engine.get_ratings_for_book_ids(user_id, [hash_book_id])
-    return json.dumps(ratings)
- 
+    rediskey = 'bookratings_{0}_{1}'.format(user_id, book_id)
+    cached = dbdao.get_redis(rediskey)
+    if cached == None or cached == '':
+        hash_book_id = map(lambda x:  abs(hash(x)) % (10 ** 8), book_id.split(','))
+        ratings = recommendation_engine.get_ratings_for_book_ids(user_id, hash_book_id)        
+        dbdao.set_redis(ratings)
+        cached = json.dumps(ratings)
+    return cached
 
-@main.route("/<int:user_id>/ratings", methods = ["POST"])
+
+@main.route("/addratings/<int:user_id>", methods=["POST"])
 def add_ratings(user_id):
     # get the ratings from the Flask POST request object
     ratings_list = request.form.keys()[0].strip().split("\n")

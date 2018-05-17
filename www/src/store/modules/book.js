@@ -3,12 +3,12 @@ import jsonp from 'superagent-jsonp'
 import common from './common'
 
 const state = {
-  novel: [],          // 小说 豆瓣
-  travel: [],         // 旅行 豆瓣
-  top: [],            // 评分最高 sqlite
-  recommendtop:[],     // 推荐算法 spark
-  topuser: [],         // 用户评分过的书籍
-  togtag:[]
+  novel: [], // 小说 豆瓣
+  travel: [], // 旅行 豆瓣
+  top: [], // 评分最高 sqlite
+  recommendtop: [], // 推荐算法 spark
+  topuser: [], // 用户评分过的书籍
+  togtag: []
 }
 
 
@@ -25,7 +25,7 @@ const mutations = {
         state.top = payload.res
         break
       case 'recommendtop':
-        state.recommendtop=payload.res
+        state.recommendtop = payload.res
         break
       case 'topuser':
         state.topuser = payload.res
@@ -43,40 +43,39 @@ const actions = {
 
   getRecommend({
     commit
-  },payload) {
-      request
-        .get(common.apiUrl(`ratings/top/${payload.uid}/${payload.count}`))
-        .end((err, res) => {
-          if (err) return
-          if (!res.body) {
-            res.body = JSON.parse(res.text)
-          }
-          debugger
-          commit({
-            type: 'getBook',
-            tag: 'recommendtop',
-            res: res.body.map(x => {
-              return {
-                id: x.isbn,
-                images: {
-                  large: x.imgl,
-                  medium: x.imgm,
-                  small: x.imgs
-                },
-                title: x.Title,
-                isbn10: x.isbn,
-                rating: {
-                  average: x.Rating,
-                  min: 0,
-                  max: 10,
-                  numraters: x.Count
-                },
-                href:'javascript:void(0)',
-                color:'#333'
-              }
-            })
+  }, payload) {
+    request
+      .get(common.apiUrl(`ratings/top/${payload.uid}/${payload.count}`))
+      .end((err, res) => {
+        if (err) return
+        if (!res.body) {
+          res.body = JSON.parse(res.text)
+        }
+        commit({
+          type: 'getBook',
+          tag: 'recommendtop',
+          res: res.body.map(x => {
+            return {
+              id: x.isbn,
+              images: {
+                large: x.imgl,
+                medium: x.imgm,
+                small: x.imgs
+              },
+              title: x.Title,
+              isbn10: x.isbn,
+              rating: {
+                average: x.Rating,
+                min: 0,
+                max: 10,
+                numraters: x.Count
+              },
+              href: 'javascript:void(0)',
+              color: '#333'
+            }
           })
         })
+      })
 
 
   },
@@ -85,7 +84,7 @@ const actions = {
   getUserRatings({
     commit
   }, payload) {
-    
+
     request
       .get(common.apiUrl(`top_user_books/${payload.uid}/${payload.count}`))
 
@@ -124,10 +123,9 @@ const actions = {
 
   getTopTags({
     commit
-  },payload){
+  }, payload) {
     request
       .get(common.apiUrl(`top_tags/${payload.count}`))
-
       .end((err, res) => {
         if (err) return
         if (!res.body) {
@@ -139,14 +137,8 @@ const actions = {
           res: res.body.map(x => {
             return {
               id: x.id,
-              title: x.Name,
-              isbn10: x.isbn,
-              rating: {
-                average: x.avgr,
-                min: 0,
-                max: 10,
-                numraters: 2
-              }
+              name: x.name,
+              avgr: x.avgr
             }
           })
         })

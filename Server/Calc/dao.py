@@ -20,10 +20,16 @@ class Dao:
             print(e)
         self.sqlcursor =self.sqlite.cursor()
 
+    def get_redis(self,key):
+        return self.redis.get(key)
+
+    def set_redis(self,key,value):
+        return self.redis.set(key,json.dumps(value),60*60)
+
     # 获取评分最高的书
     def get_top_books(self,num=10):
         key = 'topbooks_100'
-        cacheds = self.redis.get(key)
+        cacheds = self.get_redis(key)
         if cacheds == None or cacheds == '':
             sem.acquire()
             # 从数据库里取出
@@ -45,16 +51,48 @@ class Dao:
                 })
         
             # 存到redis中
-            self.redis.set(key,json.dumps(datas),60*60)
+            self.set_redis(key,datas)
         else:
             datas = json.loads(cacheds)
         num = 20 if num>20 else (num if num>0 else 10)
+        return json.dumps(datas[:num])
+
+    # 获取评分最高的书
+    def get_booksbyname(self, name):
+        key = 'books_'+name
+        cacheds = self.get_redis(key)
+        if cacheds == None or cacheds == '':
+            sem.acquire()
+            # 从数据库里取出
+            self.sqlcursor.execute(
+                "select * from [BX-Books] where [Book-Title] in ("+name+") order by [Book-Avg-Rating] desc limit 0,100")
+            dbed = self.sqlcursor.fetchall()
+            sem.release()
+            datas = []
+            for row in dbed:
+                datas.append({
+                    'isbn': row[0],
+                    'title': row[1],
+                    'author': row[2],
+                    'year': row[3],
+                    'publisher': row[4],
+                    'imgs': row[5],
+                    'imgm': row[6],
+                    'imgl': row[7],
+                    'avgr': row[8]
+                })
+
+            # 存到redis中
+            self.set_redis(key, datas)
+        else:
+            datas = json.loads(cacheds)
+        num = 20 if num > 20 else (num if num > 0 else 10)
         return json.dumps(datas[:num])
         
     # 获取评分最高的标签
     def get_top_tags(self, num=10):
         key = 'toptags_100'
-        cacheds = self.redis.get(key)
+        cacheds = self.get_redis(key)
         if cacheds == None or cacheds == '':
             sem.acquire()
             # 从数据库里取出
@@ -70,7 +108,7 @@ class Dao:
                 })
 
             # 存到redis中 缓存1小时
-            self.redis.set(key, json.dumps(datas), 60*60)
+            self.set_redis(key, datas)
         else:
             datas = json.loads(cacheds)
         num = 20 if num > 20 else (num if num > 0 else 10)
@@ -79,7 +117,7 @@ class Dao:
     # 获取某一标签评分最高的书
     def get_top_tag_books(self,tagid, num=10):
         key = 'toptagbooks_'+str(tagid)+'_100'
-        cacheds = self.redis.get(key)
+        cacheds = self.get_redis(key)
         if cacheds == None or cacheds == '':
             sem.acquire()
             # 从数据库里取出
@@ -102,7 +140,7 @@ class Dao:
                 })
 
             # 存到redis中
-            self.redis.set(key, json.dumps(datas), 60*60)
+            self.set_redis(key, datas)
         else:
             datas = json.loads(cacheds)
         num = 20 if num > 20 else (num if num > 0 else 10)
@@ -111,7 +149,7 @@ class Dao:
     # 获取用户评分过的书籍
     def get_top_user_books(self, userid, num=10):
         key = 'topuserbooks_'+str(userid)+'_100'
-        cacheds = self.redis.get(key)
+        cacheds = self.get_redis(key)
         if cacheds == None or cacheds == '':
             sem.acquire()
             # 从数据库里取出
@@ -134,7 +172,7 @@ class Dao:
                 })
 
             # 存到redis中
-            self.redis.set(key, json.dumps(datas), 60*60)
+            self.set_redis(key, datas)
         else:
             datas = json.loads(cacheds)
         num = 20 if num > 20 else (num if num > 0 else 10)

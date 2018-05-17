@@ -3,7 +3,7 @@
     <!-- <sub-nav mold="quickNav"></sub-nav> -->
     <user-bar></user-bar>
     <scroller title="评分最高" type="hasCover" :items="top"></scroller>
-    <scroller title="您评分的" type="hasCover" v-if="uid" :items="topuser"></scroller>
+    <scroller title="您的最爱" type="hasCover" v-if="uid" :items="topuser"></scroller>
     <scroller title="为您推荐" type="onlyString" v-if="uid" :items="recommendtop"></scroller>
     <!-- <scroller title="热门图书榜" type="hasCover" :items="novel"></scroller>     -->
     
@@ -11,11 +11,14 @@
     <h2>分类浏览</h2>
     <div class="content">
       <ul class="type-list">
-        <li v-for="(item,index) in itemms" :key="index">
+        <div class="genres">
+            <tags :items="toptag"></tags>
+        </div>
+        <!-- <li v-for="(item,index) in itemms" :key="index">
           <a href="#">
             {{item.title}}<span></span>
           </a>
-        </li>
+        </li> -->
       </ul>
     </div>
   </div>
@@ -28,10 +31,11 @@ import { mapState } from 'vuex'
 import Scroller from '../components/Scroller'
 import UserBar from '../components/UserBar'
 import SubNav from '../components/SubNav'
+import Tags from '../components/Tags'
 
 export default {
   name: 'book-view',
-  components: { Scroller,UserBar, SubNav},
+  components: { Scroller,UserBar, SubNav, Tags},
   data () {
     return {
       itemms:[]
@@ -46,16 +50,17 @@ export default {
       recommendtop: state=>state.book.recommendtop,
       topuser: state=>state.book.topuser,
       uid: state => state.user.uid,
-      toptags:state=>state.book.toptags
+      toptag:state=>state.book.toptag
+
     })
   },
   methods: {
     // Dispatching getBook
     getBook: function () {
+
       this.$store.dispatch('getBook')
-      this.$store.dispatch('getTopTags',{count:10})
-  
-      
+      this.$store.dispatch('getTopTags',{count:10})      
+      // 如果有用户登陆了
       if(this.uid){
         // 获取为用户推荐的书籍
         this.$store.dispatch('getRecommend',{
@@ -66,8 +71,7 @@ export default {
         this.$store.dispatch('getUserRatings',{
           uid:this.uid,
           count:10
-        })
-        
+        })        
       }
       
     }

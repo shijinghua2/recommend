@@ -68,7 +68,9 @@ export default {
         this.$store.dispatch('getUserRatings',{
           uid:this.uid,
           count:10
-        })  
+        }).then(()=>{
+          this.loading[1]=false
+        })
       }
       
     }

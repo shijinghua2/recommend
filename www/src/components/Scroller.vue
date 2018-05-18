@@ -1,19 +1,20 @@
 <template>
-<div>
-  <loading v-if="loading" />
-  <div class="scroller" v-else>
+
+  
+  <div class="scroller">
     <div class="header">
       <h2>{{title}}</h2>
     </div>
-    <div class="content">
+    <loading v-if="loading" />
+    <div class="content" v-else>
       <slot name="promItem"></slot>
       <ul class="hasCover" v-if="type === 'hasCover'">
         <li v-for="(item,index) in items" :key="index" v-if="item.images.large">
-          <router-link :to="'subject/' + item.id"  append>
+          <!-- <router-link :to="'subject/' + item.id"  append> -->
             <img v-if="item.images" :src="item.images.large" alt="">
             <span class="title">{{item.title}}</span>
             <rating v-if="item.rating" :rating="item.rating"></rating>
-          </router-link>
+          <!-- </router-link> -->
         </li>
       </ul>
       <ul class="onlyString" v-if="type === 'onlyString'">
@@ -23,7 +24,7 @@
       </ul>
     </div>
   </div>
-</div>
+
 </template>
 
 <script>

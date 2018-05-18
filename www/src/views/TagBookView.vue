@@ -27,23 +27,6 @@ export default {
     // Dispatching getBook
     getBook: function () {
 
-      this.$store.dispatch('getBook')
-      this.$store.dispatch('getTopTags',{count:10}).then(()=>{
-        this.loaded=true
-      })
-      // 如果有用户登陆了
-      if(this.uid){
-        // 获取为用户推荐的书籍
-        this.$store.dispatch('getRecommend',{
-          uid:this.uid,
-          count:8
-        })
-        // 获取用户评分过的书籍
-        this.$store.dispatch('getUserRatings',{
-          uid:this.uid,
-          count:10
-        })        
-      }
       
     }
   },

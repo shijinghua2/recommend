@@ -1,6 +1,6 @@
 <template>
   <div class="subject-view has-header">
-    <template v-if="!showLoading">
+    <template v-if="true">
       <div class="subject-card">
         <h1 class="title">{{subject.title}}</h1>
         <div class="subject-info">
@@ -54,7 +54,7 @@
       </div>
       <scroller title="推荐的豆列" type="onlyString" :items="subject"></scroller>
     </template>
-    <loading v-show="showLoading"></loading>
+    <!-- <loading v-show="showLoading"></loading> -->
   </div>
 </template>
 

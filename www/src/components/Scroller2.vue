@@ -76,7 +76,7 @@ export default {
         return;
       }
       if (!this.uid) {
-        this.$route.push({ name: "LoginView" });
+        this.$router.push({ name: "LoginView" });
       }
       this.$set(this.status, isbn, -1);
 

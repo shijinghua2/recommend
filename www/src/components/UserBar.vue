@@ -30,8 +30,6 @@ export default {
   },
   methods:{
     logout () {
-      alert(1)
-      debugger
       this.$store.commit({
         type: 'logout'
       })

@@ -57,7 +57,7 @@ const actions = {
               title: x.Title,
               isbn10: x.isbn,
               rating: {
-                average: x.Rating,
+                average: (+x.Rating).toFixed(1),
                 min: 0,
                 max: 10,
                 numraters: x.Count
@@ -95,7 +95,7 @@ const actions = {
               title: x.title,
               isbn10: x.isbn,
               rating: {
-                average: x.avgr,
+                average: (+x.avgr).toFixed(1),
                 min: 0,
                 max: 10,
                 numraters: 2
@@ -135,7 +135,7 @@ const actions = {
               title: x.title,
               isbn10: x.isbn,
               rating: {
-                average: x.avgr,
+                average: (+x.avgr).toFixed(1),
                 min: 0,
                 max: 10,
                 numraters: 2
